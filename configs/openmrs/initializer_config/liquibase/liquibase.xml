@@ -3,14 +3,61 @@
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
 
-	<!-- Concepts -->
-	<include file="concepts.xml" relativeToChangelogFile="true"/>
-
-	<!-- Encounter Types -->
-	<changeSet id="se-202402221251xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" author="jecihjoy">
-		<comment>
-			Checking whether locations table had loade 202402221251xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-		</comment>
-		<sql>select * from location</sql>
 	</changeSet>
+
+	<changeSet id="load_default_facility_${project.version}" author="jecihjoy">
+		<comment>
+			Configure default facility
+		</comment>
+		<sql>INSERT INTO global_property (property, property_value, description, uuid, datatype)
+			VALUES ('kenyaemr.defaultLocation', 7860, 'The facility for which this installation is configured', uuid(), 'org.openmrs.module.kenyaemr.datatype.LocationDatatype');
+		</sql>
+		<sqlFile relativeToChangelogFile="true"
+			path="location_tag_map/truncate_location_tag_map.sql" />
+		<sqlFile relativeToChangelogFile="true"
+			path="location_tag_map/location_tag_map.sql" />
+		<sqlFile relativeToChangelogFile="true"
+			path="queue/truncate_queues.sql" />
+		<sqlFile relativeToChangelogFile="true"
+			path="queue/queues.sql" />
+	</changeSet>
+
+	<changeSet id="load_all_concepts_${project.version}" author="jecihjoy">
+		<comment>
+			Setup kenyaemr concepts
+		</comment>
+		<sqlFile relativeToChangelogFile="true"
+			path="concept_dictionary/kenyaemr_concepts_dump-september_07_2023.sql" />
+	</changeSet>
+
+	<changeSet id="migrate_appointments_${project.version}" author="jecihjoy">
+		<comment>
+			Migrate patient appointments
+		</comment>
+		<sqlFile relativeToChangelogFile="true"
+			path="appointments/appointment_service/appointment_services.sql" />
+		<sqlFile relativeToChangelogFile="true"
+			path="appointments/hiv_appointments/truncate_appointment.sql" />
+		<sqlFile relativeToChangelogFile="true"
+			path="appointments/hiv_appointments/First_script_HIV_Followup.sql" />
+		<sqlFile relativeToChangelogFile="true"
+			path="appointments/hiv_appointments/Second_script_refill.sql" />
+		<sqlFile relativeToChangelogFile="true"
+			path="appointments/hiv_appointments/Third_script_relate_follow_refill.sql" />
+		<sqlFile relativeToChangelogFile="true"
+			path="appointments/other_appointments/other_appointments.sql" />
+	</changeSet>
+
+	<changeSet id="configure_drugs_${project.version}" author="jecihjoy">
+		<comment>
+			Configure drug definitions
+		</comment>
+		<sqlFile relativeToChangelogFile="true"
+			path="drug/truncate_drugs-10-25.sql" />
+		<sqlFile relativeToChangelogFile="true"
+			path="drug/drug_2023-10-25.sql" />
+		<sqlFile relativeToChangelogFile="true"
+			path="drug/update_tablet_units.sql" />
+	</changeSet>
+
 </databaseChangeLog>
